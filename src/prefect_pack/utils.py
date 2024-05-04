@@ -25,8 +25,11 @@ def parse_as(
 
     Example:
         ```python
-        from gh.types import GitHubIssue
-        from gh.utilities.pydantic import parse_as
+        from pydantic import BaseModel
+        from prefect_pack import parse_as
+
+        class GitHubIssue(BaseModel):
+            title: str
 
         issue = parse_as(GitHubIssue, {"title": "Test Issue"})
         print(issue.title)

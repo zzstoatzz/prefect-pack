@@ -58,7 +58,7 @@ jobs:
 
 
       - name: Install Marvin
-        run: pip install ".[tests]"
+        run: uv pip install ".[tests]"
       
       - name: Run tests
         run: pytest -n auto -vvv

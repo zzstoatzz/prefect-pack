@@ -1,0 +1,49 @@
+# Deploys changed flows to the appropriate Prefect Cloud workspace
+
+name: Deploy flows to env
+
+env:
+  PREFECT_API_KEY: ${{ secrets.PREFECT_API_KEY }}
+  PREFECT_API_URL: ${{ secrets.PREFECT_API_URL }}
+  WORKSPACE: 'prefect-sandbox/inconspicuous-pond'
+
+on:
+  push:
+    branches: [ main, feature-* ]
+    paths: 
+      - 'src/**.py'
+
+permissions:
+  contents: read
+
+jobs:
+  deploy_flows:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        id: setup_python
+        with:
+          python-version: '3.12'
+          cache: "pip"
+
+      - name: UV Cache
+      # Manually cache the uv cache directory
+      # until setup-python supports it:
+      # https://github.com/actions/setup-python/issues/822
+        uses: actions/cache@v4
+        id: cache-uv
+        with:
+          path: ~/.cache/uv
+          key: uvcache-${{ runner.os }}-${{ steps.setup_python.outputs.python-version }}-${{ hashFiles('pyproject.toml') }}
+
+
+      - name: Install Marvin
+        run: uv pip install ".[tests]"
+      
+      - name: Deploy flows
+        run: |
+            prefect --no-prompt deploy --all
