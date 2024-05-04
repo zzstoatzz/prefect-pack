@@ -3,15 +3,16 @@
 name: Deploy flows to env
 
 env:
+  WORKSPACE: 'prefect-sandbox/inconspicuous-pond'
+
   PREFECT_API_KEY: ${{ secrets.PREFECT_API_KEY }}
   PREFECT_API_URL: ${{ secrets.PREFECT_API_URL }}
-  WORKSPACE: 'prefect-sandbox/inconspicuous-pond'
 
 on:
   push:
-    branches: [ main, feature-* ]
+    branches: [ main ]
     paths: 
-      - 'src/**.py'
+      - src/**.py
 
 permissions:
   contents: read
@@ -42,8 +43,12 @@ jobs:
 
 
       - name: Install Marvin
-        run: uv pip install ".[tests]"
+        run: |
+          python -m pip install --upgrade pip uv
+          uv pip install ".[tests]"
+
       
       - name: Deploy flows
         run: |
-            prefect --no-prompt deploy --all
+          prefect cloud workspace set -w $WORKSPACE
+          prefect --no-prompt deploy --all
