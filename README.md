@@ -42,8 +42,8 @@ To use this template for your own project:
    uv pip install --system .
    ```
 
-> [!TIP] What is `uv`?
-> tl;dr - `uv` is a really fast `pip` made by the same folks as `ruff`. Check it out [here](https://github.com/astral-sh/uv?tab=readme-ov-file#getting-started). Install with `curl -LsSf https://astral.sh/uv/install.sh | sh`.
+> [!TIP]
+> What is `uv`? tl;dr - `uv` is a really fast `pip` made by the same folks as `ruff`. Check it out [here](https://github.com/astral-sh/uv?tab=readme-ov-file#getting-started). Install with `curl -LsSf https://astral.sh/uv/install.sh | sh`.
 
 ### Configuration
 
