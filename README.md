@@ -43,7 +43,7 @@ To use this template for your own project:
    ```
 
 > [!TIP]
-> What is `uv`? tl;dr - `uv` is a really fast `pip` made by the same folks as `ruff`. Check it out [here](https://github.com/astral-sh/uv?tab=readme-ov-file#getting-started). Install with `curl -LsSf https://astral.sh/uv/install.sh | sh`.
+> What is `uv`? It's a really fast `pip` made by the same folks who made `ruff`. Check it out [here](https://github.com/astral-sh/uv?tab=readme-ov-file#getting-started). Install with `curl -LsSf https://astral.sh/uv/install.sh | sh`.
 
 ### Configuration
 
