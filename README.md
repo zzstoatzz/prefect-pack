@@ -3,6 +3,7 @@
 This project serves as a GitHub repository template for boostrapping a new Prefect project.
 
 Included in this template is a basic project structure for writing, testing, and deploying Prefect flows:
+  - `pyproject.toml` file for managing project dependencies and configuration (testing, linting etc)
   - `flows/` directory for storing Prefect flow files
   - `prefect.yaml` configuration file for storing deployment definitions
   - `src/prefect_pack` package for storing flow steps and utility functions
@@ -17,7 +18,7 @@ To use this template for your own project:
 
 1. Click the "Use this template" button on the GitHub repository page.
 2. Provide a name for your new repository and select the desired visibility (public or private).
-3. Clone the newly created repository to your local machine.
+3. Clone the newly created repository to your local machine and modify the project as needed.
 
 
 ## Setup Guide
@@ -32,15 +33,17 @@ To use this template for your own project:
 
 1. Change to the project directory:
    ```
-   cd your-repo-name
+   cd your-prefect-project
    ```
 
 2. Install the package:
-   ```
-   python -m pip install --upgrade pip uv
+   ```install
    uv venv 
    uv pip install --system .
    ```
+
+> [!TIP] What is `uv`?
+> tl;dr - `uv` is a really fast `pip` made by the same folks as `ruff`. Check it out [here](https://github.com/astral-sh/uv?tab=readme-ov-file#getting-started). Install with `curl -LsSf https://astral.sh/uv/install.sh | sh`.
 
 ### Configuration
 
@@ -110,6 +113,3 @@ To set up the deployment workflow:
 
 Contributions to this template are welcome! If you find any issues or have suggestions for improvements, please open an issue or submit a pull request.
 
-## License
-
-This template is currently released without a specific license. You are free to modify and adapt it to suit your needs.
