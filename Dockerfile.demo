@@ -1,0 +1,10 @@
+FROM python:3.12-alpine
+
+WORKDIR /app
+
+COPY pyproject.toml pyproject.toml
+
+RUN pip install -U pip uv
+RUN uv venv
+RUN uv pip install .
+

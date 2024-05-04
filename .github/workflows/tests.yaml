@@ -1,0 +1,65 @@
+name: Run Tests
+
+env:
+  # enable colored output - see https://github.com/pytest-dev/pytest/issues/7443
+  PY_COLORS: 1
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - .github/workflows/tests.yml
+      - src/**
+      - tests/**
+      - pyproject.toml
+
+  pull_request:
+    paths:
+      - .github/workflows/tests.yml
+      - src**
+      - tests/**
+      - pyproject.toml
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  run_tests:
+    name: Run Tests on ${{ matrix.os }} with Python ${{ matrix.python-version }}
+    timeout-minutes: 15
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ['3.9', '3.10', '3.11', '3.12']
+        
+        
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        id: setup_python
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
+
+      - name: UV Cache
+      # Manually cache the uv cache directory
+      # until setup-python supports it:
+      # https://github.com/actions/setup-python/issues/822
+        uses: actions/cache@v4
+        id: cache-uv
+        with:
+          path: ~/.cache/uv
+          key: uvcache-${{ runner.os }}-${{ steps.setup_python.outputs.python-version }}-${{ hashFiles('pyproject.toml') }}
+
+
+      - name: Install Marvin
+        run: pip install ".[tests]"
+      
+      - name: Run tests
+        run: pytest -n auto -vvv
+        if: ${{ !github.event.pull_request.head.repo.fork }}
