@@ -50,14 +50,10 @@ jobs:
           key: uvcache-${{ runner.os }}-${{ steps.setup_python.outputs.python-version }}-${{ hashFiles('pyproject.toml') }}
 
 
-      - name: Install Marvin
+      - name: Install and Deploy
         run: |
           python -m pip install --upgrade pip uv
           uv venv
           uv pip install ".[tests]"
-
-      
-      - name: Deploy flows
-        run: |
           prefect cloud workspace set -w $WORKSPACE
           prefect --no-prompt deploy --all
