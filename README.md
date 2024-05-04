@@ -2,8 +2,7 @@
 
 This project serves as a GitHub repository template for boostrapping a new Prefect project.
 
-Included in this template:
-- A basic project structure for organizing Prefect flows and tests
+Included in this template is a basic project structure for writing, testing, and deploying Prefect flows:
   - `flows/` directory for storing Prefect flow files
   - `prefect.yaml` configuration file for storing deployment definitions
   - `src/prefect_pack` package for storing flow steps and utility functions
