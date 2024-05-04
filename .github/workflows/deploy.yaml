@@ -53,6 +53,7 @@ jobs:
       - name: Install Marvin
         run: |
           python -m pip install --upgrade pip uv
+          uv venv
           uv pip install ".[tests]"
 
       
