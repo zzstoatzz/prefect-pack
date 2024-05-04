@@ -20,39 +20,7 @@ To use this template for your own project:
 3. Clone the newly created repository to your local machine.
 
 
-## Project Structure Overview
-
-```
-.
-├── .github
-│   └── workflows
-│       └── deploy.yaml
-│       └── tests.yaml
-├── .gitignore
-├── flows
-│   └── hello.py
-├── prefect.yaml
-├── src
-│   └── prefect_pack
-│       ├── __init__.py
-│       ├── steps
-│       └── utils.py
-└── tests
-    ├── conftest.py
-    └── flows
-        └── test_hello.py
-```
-
-- `flows/`: Directory to store your Prefect flow files.
-- `prefect.yaml`: Configuration file for deploying flows.
-- `src/prefect_pack/`: Package source code - contains flow steps and utility functions.
-  - `steps/`: Directory for custom deployment step definitions.
-  - `utils.py`: Your custom utility functions you reuse often in your flows.
-- `tests/`: Directory for test files.
-  - `flows/`: Directory for flow-specific tests.
-- `.github/workflows/`: Directory for GitHub Actions workflows.
-
-## Getting Started
+## Setup Guide
 
 ### Prerequisites
 
@@ -107,6 +75,36 @@ To set up the deployment workflow:
 > [!TIP]
 > Use `gh secret set -f .env` to set all environment variables in your `.env` file as GitHub Actions secrets in the remote repository.
 
+## Project Structure Overview
+
+```
+.
+├── .github
+│   └── workflows
+│       └── deploy.yaml
+│       └── tests.yaml
+├── flows
+│   └── hello.py
+├── prefect.yaml
+├── src
+│   └── prefect_pack
+│       ├── __init__.py
+│       ├── steps
+│       └── utils.py
+└── tests
+    ├── conftest.py
+    └── flows
+        └── test_hello.py
+```
+
+- `flows/`: Directory to store your Prefect flow files.
+- `prefect.yaml`: Configuration file for deploying flows.
+- `src/prefect_pack/`: Package source code - contains flow steps and utility functions.
+  - `steps/`: Directory for custom deployment step definitions.
+  - `utils.py`: Your custom utility functions you reuse often in your flows.
+- `tests/`: Directory for test files.
+  - `flows/`: Directory for flow-specific tests.
+- `.github/workflows/`: Directory for GitHub Actions workflows.
 
 ## Contributing
 
