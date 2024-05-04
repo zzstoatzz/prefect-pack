@@ -55,6 +55,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip uv
           uv venv
-          uv pip install .
+          uv pip install --system .
           prefect cloud workspace set -w $WORKSPACE
           prefect --no-prompt deploy --all
