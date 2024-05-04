@@ -10,7 +10,7 @@ Included in this template:
   - a skeleton test suite using `pytest` and fixtures for setting up a temporary Prefect environment
 
 > [!NOTE]
-> You don't need to publish `prefect-pack` to PyPI, you can install it locally and in your images using `pip install .` or `pip install -e .`.
+> You don't need to publish `prefect-pack` to PyPI, or install any distribution. You can install it locally and in your images using `pip install .` or `pip install -e .`.
 
 ## Using the Template
 
