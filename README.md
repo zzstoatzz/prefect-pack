@@ -104,6 +104,11 @@ To set up the deployment workflow:
 2. Ensure that the `deploy.yaml` workflow file is present in the `.github/workflows` directory.
 3. Push your changes to the `main` branch to trigger the deployment workflow.
 
+
+> [!TIP]
+> Use `gh secret set -f .env` to set all environment variables in your `.env` file as GitHub Actions secrets in the remote repository.
+
+
 ## Contributing
 
 Contributions to this template are welcome! If you find any issues or have suggestions for improvements, please open an issue or submit a pull request.
