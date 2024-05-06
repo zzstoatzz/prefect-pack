@@ -1,6 +1,6 @@
 # prefect pack
 
-This project serves as a GitHub repository template for boostrapping a new Prefect project.
+This project serves as a GitHub repository template for bootstrapping a new Prefect project.
 
 Included in this template is a basic project structure for writing, testing, and deploying Prefect flows:
   - `pyproject.toml` file for managing project dependencies and configuration (testing, linting etc)
