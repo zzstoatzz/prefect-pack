@@ -1,0 +1,40 @@
+services:
+
+  tasks:
+    restart: always
+    image: prefecthq/prefect:3.0.0rc12-python3.12
+    command: python -m tasks
+    env_file:
+      - .env
+    environment:
+      - PREFECT_API_KEY=${PREFECT_API_KEY}
+      - PREFECT_API_URL=${PREFECT_API_URL}
+      - PREFECT_LOCAL_STORAGE_PATH=/task-storage
+      - PREFECT_TASK_SCHEDULING_DEFAULT_STORAGE_BLOCK=local-file-system/repo-activites
+      - PYTHONPATH=/app
+    volumes:
+      - task-storage:/task-storage
+      - ./:/app
+
+  api:
+    restart: always
+    image: prefecthq/prefect:3.0.0rc12-python3.12
+    command: python -m api
+    ports:
+      - "8000:8000"
+    depends_on:
+      - tasks
+    env_file:
+      - .env
+    environment:
+      - PREFECT_API_KEY=${PREFECT_API_KEY}
+      - PREFECT_API_URL=${PREFECT_API_URL}
+      - PREFECT_LOCAL_STORAGE_PATH=/task-storage
+      - PREFECT_TASK_SCHEDULING_DEFAULT_STORAGE_BLOCK=local-file-system/repo-activites
+      - PYTHONPATH=/app
+    volumes:
+      - task-storage:/task-storage
+      - ./:/app
+
+volumes:
+  task-storage: {}
