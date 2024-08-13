@@ -57,8 +57,10 @@ jobs:
           key: uvcache-${{ runner.os }}-${{ steps.setup_python.outputs.python-version }}-${{ hashFiles('pyproject.toml') }}
 
 
-      - name: Install Marvin
-        run: uv pip install ".[tests]"
+      - name: Install `prefect-pack`
+        run: | 
+          pip install -U pip uv
+          uv pip install --system ".[tests]"
       
       - name: Run tests
         run: pytest -n auto -vvv
