@@ -4,21 +4,32 @@
 
 # Generic metadata about this project
 name: prefect-pack
-prefect-version: 2.18.3
 
 # build section allows you to manage and build docker images
 
 # this is a custom step that emits a deployment request event
 build:
-- prefect_pack.steps.utils.emit_environment_description:
-    id: emit_environment_description
-    requires: prefect-docker>=0.6.0rc4
+- prefect_docker.deployments.steps.build_docker_image:
+    id: build-image
+    image_name: zzstoatzz/prefect-pack
+    dockerfile: Dockerfile.demo
 
-# downstream steps can use the result of the upstream step
-- prefect.deployments.steps.run_shell_script:
-    id: emit_environment_description
-    requires: prefect-docker>=0.6.0rc4
-    script: echo "{{ emit_environment_description.event }}"
+# push section allows you to push docker images to a registry
+# also automatically cached for duration of `prefect deploy`
+push:
+- prefect_docker.deployments.steps.push_docker_image:
+# downstream steps can use the result of the upstream step (e.g. build-image)
+    image_name: zzstoatzz/prefect-pack
+    tag: "{{ build-image.tag }}"
+
+# here's our own custom step that emits a deployment request event
+# that accepts arbitrary **kwargs to stuff in the event payload
+# see `src/prefect_pack/steps/events.py:emit_environment_description`
+- prefect_pack.steps.events.emit_environment_description:
+    current_user: "{{ $USER }}"
+    docker_info:
+      image: "{{ build-image.image }}"
+      tag: "{{ build-image.tag }}"
 
 pull:
 - prefect.deployments.steps.git_clone:
@@ -34,6 +45,8 @@ deployments:
   parameters: {}
   work_pool:
     name: docker-work
+    job_variables:
+      image: "{{ build-image.image }}"
   version:
   enforce_parameter_schema: true
   schedules: []
