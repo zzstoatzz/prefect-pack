@@ -9,7 +9,7 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 requires-python = ">=3.10"
-dependencies = ["prefect>=3.0.0rc16", "prefect-docker>=0.6.0rc"]
+dependencies = ["prefect", "prefect-docker"]
 
 [project.optional-dependencies]
 dev = ["ipython", "pre-commit>=2.21,<4.0", "ruff", "prefect-pack[tests]"]
