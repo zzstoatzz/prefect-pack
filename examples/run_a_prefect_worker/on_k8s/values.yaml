@@ -1,0 +1,6 @@
+worker:
+  cloudApiConfig:
+    accountId: 12242a57-9f05-4bf5-8853-9bff595d4bab
+    workspaceId: cafa2ffa-f6cc-4ed6-ab76-eaa4ba1ad40e
+  config:
+    workPool: dev-k8s

@@ -5,48 +5,69 @@
 # Generic metadata about this project
 name: prefect-pack
 
-# build section allows you to manage and build docker images
-
-# this is a custom step that emits a deployment request event
-build:
-- prefect_docker.deployments.steps.build_docker_image:
-    id: build-image
-    image_name: zzstoatzz/prefect-pack
-    dockerfile: Dockerfile.demo
-
-# push section allows you to push docker images to a registry
-# also automatically cached for duration of `prefect deploy`
-push:
-- prefect_docker.deployments.steps.push_docker_image:
-# downstream steps can use the result of the upstream step (e.g. build-image)
-    image_name: zzstoatzz/prefect-pack
-    tag: "{{ build-image.tag }}"
-
-# here's our own custom step that emits a deployment request event
-# that accepts arbitrary **kwargs to stuff in the event payload
-# see `src/prefect_pack/steps/events.py:emit_environment_description`
-- prefect_pack.steps.events.emit_environment_description:
-    current_user: "{{ $USER }}"
-    docker_info:
-      image: "{{ build-image.image }}"
-      tag: "{{ build-image.tag }}"
-
+# applies to all deployments
 pull:
-- prefect.deployments.steps.git_clone:
-    repository: https://github.com/zzstoatzz/prefect-pack.git
+  - prefect.deployments.steps.git_clone: &git_clone
+      repository: https://github.com/zzstoatzz/prefect-pack.git
 
 # the deployments section allows you to provide configuration for deploying flows
 deployments:
-- name: print-info
-  tags:
-  - sanity-check
-  description: a sanity check flow that prints some information
-  entrypoint: flows/hello.py:print_info
-  parameters: {}
-  work_pool:
-    name: docker-work
-    job_variables:
-      image: "{{ build-image.image }}"
-  version:
-  enforce_parameter_schema: true
-  schedules: []
+  - name: print-info
+    tags:
+      - sanity-check
+    description: a sanity check flow that prints some information
+    entrypoint: flows/hello.py:print_info
+    parameters: {}
+    work_pool:
+      name: docker-work
+      job_variables:
+        image: "{{ build-image.image }}"
+    version:
+    enforce_parameter_schema: true
+    schedules: []
+
+    # this is a custom step that emits a deployment request event
+    build:
+      - prefect_docker.deployments.steps.build_docker_image:
+          id: build-image
+          image_name: zzstoatzz/prefect-pack
+          dockerfile: Dockerfile.demo
+
+    # push section allows you to push docker images to a registry
+    # also automatically cached for duration of `prefect deploy`
+    push:
+      - prefect_docker.deployments.steps.push_docker_image:
+          # downstream steps can use the result of the upstream step (e.g. build-image)
+          image_name: zzstoatzz/prefect-pack
+          tag: "{{ build-image.tag }}"
+
+      # here's our own custom step that emits a deployment request event
+      # that accepts arbitrary **kwargs to stuff in the event payload
+      # see `src/prefect_pack/steps/events.py:emit_environment_description`
+      - prefect_pack.steps.events.emit_environment_description:
+          current_user: "{{ $USER }}"
+          docker_info:
+            image: "{{ build-image.image }}"
+            tag: "{{ build-image.tag }}"
+
+  - name: uses-k8s-secret
+    description: a sanity check flow that prints some information
+    entrypoint: flows/uses_k8s_secret.py:main
+    parameters: {}
+    work_pool:
+      name: dev-k8s
+      job_variables:
+        image: prefecthq/prefect:3-python3.12
+        env:
+          - name: OPENAI_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: openai-api-key
+                key: key
+
+    pull:
+      - prefect.deployments.steps.git_clone:
+          repository: https://github.com/zzstoatzz/prefect-pack.git
+      - prefect.deployments.steps.run_shell_script:
+          id: run-shell-script
+          script: prefect version
