@@ -69,5 +69,4 @@ deployments:
       - prefect.deployments.steps.git_clone:
           repository: https://github.com/zzstoatzz/prefect-pack.git
       - prefect.deployments.steps.run_shell_script:
-          id: run-shell-script
-          script: prefect version
+          script: pip install marvin
