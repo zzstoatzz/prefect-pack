@@ -26,7 +26,6 @@ deployments:
     enforce_parameter_schema: true
     schedules: []
 
-    # this is a custom step that emits a deployment request event
     build:
       - prefect_docker.deployments.steps.build_docker_image:
           id: build-image
