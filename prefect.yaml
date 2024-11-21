@@ -61,8 +61,7 @@ deployments:
           repository: https://github.com/zzstoatzz/prefect-pack.git
       - prefect.deployments.steps.run_shell_script:
           script: |
-            echo "$(pwd)"
-            uv pip install -r flows/network_speedtest/requirements.txt
+            uv pip install -r prefect-pack/flows/network_speedtest/requirements.txt
 
   - name: uses-k8s-secret
     description: a sanity check flow that prints some information
