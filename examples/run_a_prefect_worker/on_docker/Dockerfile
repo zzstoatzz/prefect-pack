@@ -9,5 +9,5 @@ RUN uv pip install prefect
 
 ENTRYPOINT ["uv", "run", "prefect", "worker", "start", "--pool", "local"]
 
-# docker build -t zzstoatzz/prefect-worker:latest -f examples/run_a_prefect_worker/on_docker/Dockerfile . --build-arg WORK_POOL_NAME=local
+# docker build -t zzstoatzz/prefect-worker:latest -f examples/run_a_prefect_worker/on_docker/Dockerfile .
 # docker run -d --rm --name prefect-worker --env-file .env zzstoatzz/prefect-worker:latest
