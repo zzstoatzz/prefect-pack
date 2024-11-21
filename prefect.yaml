@@ -49,6 +49,21 @@ deployments:
             image: "{{ build-image.image }}"
             tag: "{{ build-image.tag }}"
 
+  - name: network-speed
+    description: a sanity check flow that prints some information
+    entrypoint: flows/network_speedtest/main.py:monitor_network
+    parameters: {}
+    work_pool:
+      name: local # this is a process work pool
+
+    pull:
+      - prefect.deployments.steps.git_clone:
+          repository: https://github.com/zzstoatzz/prefect-pack.git
+      - prefect.deployments.steps.run_shell_script:
+          script: |
+            echo "$(pwd)"
+            uv pip install -r flows/network_speedtest/requirements.txt
+
   - name: uses-k8s-secret
     description: a sanity check flow that prints some information
     entrypoint: flows/uses_k8s_secret.py:main

@@ -40,7 +40,3 @@ def check_threshold(upload_speed: float, download_speed: float) -> None:
 def monitor_network() -> None:
     state = check_threshold(*run_speed_test(), return_state=True)  # type: ignore
     print(f"Network monitoring finished in state: {state!r}")
-
-
-if __name__ == "__main__":
-    monitor_network.serve(cron="*/30 * * * *")
