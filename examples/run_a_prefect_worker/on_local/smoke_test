@@ -1,0 +1,21 @@
+#! /usr/bin/env bash
+
+prefect work-pool create local --overwrite
+
+prefect --no-prompt deploy --prefect-file examples/run_a_prefect_worker/on_local/prefect.yaml --all
+
+prefect deployment run uses-emoji/deployment-1
+
+prefect worker start -p local --run-once
+
+prefect deployment run uses-pandas/deployment-2
+
+prefect worker start -p local --run-once
+
+echo ""
+
+echo "All done!"
+
+echo ""
+
+echo "'emoji' and 'pandas' were ephemerally installed and no longer exist in the worker venv"

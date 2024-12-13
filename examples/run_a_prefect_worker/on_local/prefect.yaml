@@ -2,35 +2,21 @@ name: prefect-pack-local-worker
 
 deployments:
   - name: deployment-1
-    entrypoint: examples/run_a_prefect_worker/on_local/flow1.py:uses_emoji
+    entrypoint: examples/run_a_prefect_worker/on_local/emoji_flow.py:uses_emoji
     work_pool:
       name: local
       job_variables:
-        env:
-          VIRTUAL_ENV: deployment-1
+        command: uv run --with emoji python -m prefect.engine
     pull:
       - prefect.deployments.steps.git_clone:
           repository: https://github.com/zzstoatzz/prefect-pack.git
-
-      - prefect.deployments.steps.run_shell_script:
-          id: run_shell_script
-          script: |
-            uv venv deployment-1
-            uv pip install --system -r prefect-pack/examples/run_a_prefect_worker/on_local/reqs1.txt
 
   - name: deployment-2
-    entrypoint: examples/run_a_prefect_worker/on_local/flow2.py:uses_pandas
+    entrypoint: examples/run_a_prefect_worker/on_local/pandas_flow.py:uses_pandas
     work_pool:
       name: local
       job_variables:
-        env:
-          VIRTUAL_ENV: deployment-2
+        command: uv run --with pandas python -m prefect.engine
     pull:
       - prefect.deployments.steps.git_clone:
           repository: https://github.com/zzstoatzz/prefect-pack.git
-
-      - prefect.deployments.steps.run_shell_script:
-          id: run_shell_script
-          script: |
-            uv venv deployment-2
-            uv pip install --system -r prefect-pack/examples/run_a_prefect_worker/on_local/reqs2.txt
