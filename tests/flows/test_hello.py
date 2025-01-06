@@ -1,9 +1,11 @@
 import re
 
+import pytest
+
 from flows.hello import print_info
 
 
-def test_print_info(caplog):
+def test_print_info(caplog: pytest.LogCaptureFixture):
     with caplog.at_level("INFO"):
         print_info()
 

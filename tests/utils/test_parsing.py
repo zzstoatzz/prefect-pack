@@ -1,5 +1,6 @@
-from prefect_pack import parse_as
 from pydantic import BaseModel
+
+from prefect_pack import parse_as
 
 
 def test_parsing():

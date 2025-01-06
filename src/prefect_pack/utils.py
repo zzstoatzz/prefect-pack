@@ -1,8 +1,11 @@
-from typing import Any, Callable, Literal, TypeVar, get_origin
+from collections.abc import Callable
+from typing import Any, Literal, TypeVar, get_origin
 
 from pydantic import TypeAdapter
 
 T = TypeVar("T")
+
+_adapter_cache: dict[type[Any], TypeAdapter[Any]] = {}
 
 
 def parse_as(
@@ -36,11 +39,15 @@ def parse_as(
         # => "Test Issue"
         ```
     """
-    adapter = TypeAdapter(type_)
+    adapter = _adapter_cache.get(type_)
+    if adapter is None:
+        adapter = TypeAdapter(type_)
+        _adapter_cache[type_] = adapter
 
     parser: Callable[[Any], T] = getattr(adapter, f"validate_{mode}")
 
     if get_origin(type_) is list and isinstance(data, dict):
-        data = next(iter(data.values()))
+        values: dict[Any, Any] = data
+        data = next(iter(values.values()))
 
     return parser(data)

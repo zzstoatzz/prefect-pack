@@ -1,2 +1,2 @@
-prefect>=3.0.0rc17
+prefect
 speedtest-cli

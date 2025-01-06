@@ -21,7 +21,7 @@ if __name__ == "__main__":
 
     print(f"Using source: {source}")
 
-    f.from_source(
+    f.from_source(  # type: ignore
         source=source,
         entrypoint="examples/run_flows_via_serve/conditional_source.py:f",
-    ).serve()
+    ).serve()  # type: ignore
