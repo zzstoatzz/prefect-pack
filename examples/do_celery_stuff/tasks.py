@@ -18,7 +18,7 @@ def find_primes_up_to(n: int) -> list[int]:
                 return False
         return True
 
-    primes = []
+    primes: list[int] = []
     for i in range(2, n + 1):
         if is_prime(i):
             primes.append(i)
@@ -28,4 +28,4 @@ def find_primes_up_to(n: int) -> list[int]:
 
 
 if __name__ == "__main__":
-    find_primes_up_to.serve()
+    find_primes_up_to.serve()  # type: ignore

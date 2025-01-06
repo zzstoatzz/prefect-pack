@@ -1,6 +1,6 @@
 from pathlib import Path
 
-import emoji
+import emoji  # type: ignore
 from prefect import flow
 from prefect.docker import DockerImage
 
@@ -12,8 +12,8 @@ docker_image = DockerImage(
 
 
 @flow
-def emoji_flow(message: str = "Hello, World!"):
-    return emoji.emojize(message)
+def emoji_flow(message: str = "Hello, World!") -> str:
+    return emoji.emojize(message)  # type: ignore
 
 
 if __name__ == "__main__":
@@ -24,10 +24,10 @@ if __name__ == "__main__":
     prefect worker start --pool docker-work
     ```
     """
-    flow.from_source(
+    flow.from_source(  # type: ignore
         source="https://github.com/zzstoatzz/prefect-pack.git",
         entrypoint="flows/with_special_deps/deploy.py:emoji_flow",
-    ).deploy(
+    ).deploy(  # type: ignore
         name="emoji-deployment",
         work_pool_name="docker-work",
         image=docker_image,

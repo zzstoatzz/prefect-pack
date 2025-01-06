@@ -68,7 +68,7 @@ deployments:
     entrypoint: flows/uses_k8s_secret.py:main
     parameters: {}
     work_pool:
-      name: dev-k8s
+      name: k8s
       job_variables:
         image: prefecthq/prefect:3-python3.12
         env:

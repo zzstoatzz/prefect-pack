@@ -5,6 +5,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y git
 
 COPY pyproject.toml pyproject.toml
+COPY README.md README.md
 COPY src src
 COPY .git .git
 

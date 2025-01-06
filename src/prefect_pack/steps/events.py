@@ -32,7 +32,7 @@ def get_git_context() -> dict[str, str] | None:
         return None
 
 
-def emit_environment_description(**kwargs) -> dict[str, Any] | None:
+def emit_environment_description(**kwargs: Any) -> dict[str, Any] | None:
     """Gather and emit information about the origin of a deployment request.
 
     Args:
