@@ -37,7 +37,7 @@ jobs:
         uses: astral-sh/setup-uv@v5
         with:
           version: "latest"
-
+          python-version: "3.12"
       - name: Install and Deploy
         run: |
           make deployments
