@@ -1,0 +1,10 @@
+deployments:
+  - name: nested-project-flow
+    description: a sanity check flow that prints some information
+    entrypoint: flows/nested_project/some_flow.py:some_flow
+    parameters: {}
+    work_pool:
+      name: local # this is a process work pool
+    pull:
+      - prefect.deployments.steps.git_clone:
+          repository: https://github.com/zzstoatzz/prefect-pack.git
