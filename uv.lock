@@ -1225,7 +1225,6 @@ wheels = [
 
 [[package]]
 name = "prefect-pack"
-version = "0.1.dev37+g7164a73.d20250106"
 source = { editable = "." }
 dependencies = [
     { name = "prefect", extra = ["docker"] },

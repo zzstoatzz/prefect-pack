@@ -1,0 +1,23 @@
+pull: # apply this "global" pull step to all deployments defined below
+  - prefect.deployments.steps.git_clone:
+      id: git-clone
+      repository: https://github.com/zzstoatzz/prefect-pack.git
+  - prefect.deployments.steps.run_shell_script:
+      id: run-shell-script
+      script: /bin/bash -c "cd $REPO_DIR/flows/be_modal"
+      env:
+        REPO_DIR: '{{ git-clone.directory }}'
+      expand_env_vars: true
+
+deployments:
+  - name: nested-project-flow
+    description: prints hello world
+    entrypoint: flows/be_modal/some_flow.py:hello_world
+    work_pool:
+      name: modal
+      job_variables:
+        image: 
+          tag: prefecthq/prefect:3.1.15-python3.12
+        pip_packages:
+          - pandas
+          - pydantic==2.10.6
