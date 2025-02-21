@@ -25,25 +25,30 @@ To use this template for your own project:
 
 ### Prerequisites
 
+- [`uv`](https://github.com/astral-sh/uv?tab=readme-ov-file#getting-started) - if you made `pip` faster and more capable like `cargo`, by the same folks who made `ruff`
 - Python 3.10+
-- `prefect` >= 2.18.3
-- Docker
+- `prefect` >= 3.2.6
 
-### Installation
+### Using this template
+
+0. Clone the repository:
+   ```bash
+   git clone https://github.com/zzstoatzz/prefect-pack.git
+   ```
 
 1. Change to the project directory:
-   ```
+   ```bash
    cd your-prefect-project
    ```
 
-2. Install the package:
-   ```install
-   uv venv 
-   uv pip install --system .
+2. Install dependencies:
+   ```bash
+   uv sync
    ```
 
 > [!TIP]
-> What is `uv`? It's a really fast `pip` made by the same folks who made `ruff`. Check it out [here](https://github.com/astral-sh/uv?tab=readme-ov-file#getting-started). Install with `curl -LsSf https://astral.sh/uv/install.sh | sh`. You can instead use `pip` if you like waiting for dependencies to resolve.
+> Install [`just`](https://github.com/casey/just) to use the `justfile` for commands like `just deploy-all`.
+
 
 ### Configuration
 
@@ -58,12 +63,13 @@ Update the `prefect.yaml` file with your project-specific configuration, such as
 
 To run the test suite, use the following command:
 
-```
-pytest -n auto -vvv
-```
+```bash
+uv run pytest
 
-This command will run the tests in parallel (`-n auto`) with verbose output (`-vvv`).
+# or
 
+just test
+```
 ### Deploying Flows
 
 The template includes a GitHub Actions workflow (`deploy.yaml`) to automatically deploy flows to a Prefect Cloud workspace when changes are pushed to the `main` branch.

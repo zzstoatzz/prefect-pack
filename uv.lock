@@ -1,4 +1,5 @@
 version = 1
+revision = 1
 requires-python = ">=3.10"
 
 [[package]]
@@ -1225,7 +1226,6 @@ wheels = [
 
 [[package]]
 name = "prefect-pack"
-version = "0.1.dev43+g7bfc951.d20250205"
 source = { editable = "." }
 dependencies = [
     { name = "prefect", extra = ["docker"] },
@@ -1265,7 +1265,7 @@ requires-dist = [
     { name = "pre-commit", marker = "extra == 'dev'" },
     { name = "pre-commit", marker = "extra == 'dev'", specifier = ">=2.21,<4.0" },
     { name = "pre-commit", marker = "extra == 'tests'" },
-    { name = "prefect", extras = ["docker"], specifier = ">=3.1.11" },
+    { name = "prefect", extras = ["docker"] },
     { name = "pytest", marker = "extra == 'dev'", specifier = "~=7.3.1" },
     { name = "pytest", marker = "extra == 'tests'", specifier = "~=7.3.1" },
     { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=0.18.2,!=0.22.0,<0.23.0" },
@@ -1282,6 +1282,7 @@ requires-dist = [
     { name = "pytest-xdist", marker = "extra == 'tests'" },
     { name = "ruff", marker = "extra == 'dev'" },
 ]
+provides-extras = ["dev", "tests"]
 
 [[package]]
 name = "prometheus-client"
