@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 import subprocess
 import time
@@ -11,7 +13,7 @@ def get_client_id() -> str:
     return f"{os.uname().nodename}-{os.getpid()}-{int(time.time())}"
 
 
-def get_git_context() -> dict[str, str] | None:
+def get_git_context() -> dict[str, str]:
     """Retrieve information about the current git repository.
 
     Returns:
@@ -29,10 +31,10 @@ def get_git_context() -> dict[str, str] | None:
             k: subprocess.check_output(v, text=True).strip() for k, v in cmds.items()
         }
     except subprocess.CalledProcessError:
-        return None
+        return {}
 
 
-def emit_environment_description(**kwargs: Any) -> dict[str, Any] | None:
+def emit_environment_description(**kwargs: Any) -> dict[str, Any]:
     """Gather and emit information about the origin of a deployment request.
 
     Args:
@@ -47,7 +49,7 @@ def emit_environment_description(**kwargs: Any) -> dict[str, Any] | None:
             "prefect.resource.id": f"deployment-request-{get_client_id()}",
             "prefect.resource.description": "Someone requested a deployment",
         },
-        payload=dict(**kwargs | (get_git_context() or {})),
+        payload=dict(**kwargs | get_git_context()),
     )
 
     return event.model_dump(exclude_none=True) if event else {}
