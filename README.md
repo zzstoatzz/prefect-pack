@@ -10,7 +10,7 @@ Included in this template is a basic project structure for writing, testing, and
   - a skeleton test suite using `pytest` and fixtures for setting up a temporary Prefect environment
 
 > [!NOTE]
-> You don't need to publish `prefect-pack` to PyPI, or install any distribution. You can install it locally and in your images using `pip install .` or `pip install -e .`.
+> You don't need to publish `prefect-pack` to PyPI, or install any distribution. You can install it locally and in your images using `uv sync` or `pip install .`
 
 ## Using the Template
 
@@ -24,26 +24,26 @@ To use this template for your own project:
 ## Setup Guide
 
 ### Prerequisites
-
+- `git`
 - [`uv`](https://github.com/astral-sh/uv?tab=readme-ov-file#getting-started) - if you made `pip` faster and more capable like `cargo`, by the same folks who made `ruff`
-- Python 3.10+
-- `prefect` >= 3.2.6
+- (optional) [`just`](https://github.com/casey/just) - if you want to use the `justfile` for commands like `just deploy-all`
 
 ### Using this template
 
-0. Clone the repository:
+0. Clone the repository and change to the project directory:
    ```bash
    git clone https://github.com/zzstoatzz/prefect-pack.git
+   cd prefect-pack
    ```
 
-1. Change to the project directory:
-   ```bash
-   cd your-prefect-project
-   ```
-
-2. Install dependencies:
+1. Install dependencies:
    ```bash
    uv sync
+   ```
+
+2. Serve a deployment:
+   ```bash
+   uv run flows/hello.py
    ```
 
 > [!TIP]
