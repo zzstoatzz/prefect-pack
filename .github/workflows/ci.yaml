@@ -23,8 +23,6 @@ jobs:
 
       - name: Install uv
         uses: astral-sh/setup-uv@v5
-        with:
-          version: "latest"
-          python-version: "3.12"
+      - uses: extractions/setup-just@v2
       - name: Run pre-commit
-        run: make lint
+        run: just lint
