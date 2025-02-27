@@ -10,9 +10,10 @@ classifiers = [
 requires-python = ">=3.10"
 dependencies = ["prefect[docker]"]
 
-[project.optional-dependencies]
+[dependency-groups]
 dev = ["ipython", "pre-commit>=2.21,<4.0", "prefect-pack[tests]", "ruff"]
 
+[project.optional-dependencies]
 tests = [
     "flaky",
     "pre-commit",
@@ -24,6 +25,8 @@ tests = [
     "pytest-timeout",
     "pytest-xdist",
 ]
+
+speedtest = ["speedtest-cli"]
 
 [project.urls]
 Code = "https://github.com/zzstoatzz/prefect-pack"

@@ -63,6 +63,26 @@ deployments:
           script: |
             uv pip install -r prefect-pack/flows/network_speedtest/requirements.txt
 
+  - name: network-speed-on-k8s
+    description: a sanity check flow that prints some information
+    entrypoint: flows/network_speedtest/main.py:monitor_network
+    parameters: {}
+    work_pool:
+      name: dev-k8s
+      job_variables:
+        image: "{{ build-image.image }}"
+        command: "uv run -m prefect.engine"
+    build:
+      - prefect_docker.deployments.steps.build_docker_image:
+          id: build-image
+          image_name: zzstoatzz/prefect-pack
+          tag: network-speed-on-k8s
+          dockerfile: Dockerfile.speedtest
+    push:
+      - prefect_docker.deployments.steps.push_docker_image:
+          image_name: "{{ build-image.image }}"
+          tag: "{{ build-image.tag }}"
+
   - name: uses-k8s-secret
     description: a sanity check flow that prints some information
     entrypoint: flows/uses_k8s_secret.py:main
