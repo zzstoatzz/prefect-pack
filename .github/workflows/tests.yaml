@@ -44,6 +44,7 @@ jobs:
         with:
           version: "latest"
           python-version: ${{ matrix.python-version }}
+      - uses: extractions/setup-just@v2
       - name: Run test
-        run: make test
+        run: just test
         if: ${{ !github.event.pull_request.head.repo.fork }}

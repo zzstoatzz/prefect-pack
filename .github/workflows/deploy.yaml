@@ -38,6 +38,6 @@ jobs:
         with:
           version: "latest"
           python-version: "3.12"
+      - uses: extractions/setup-just@v2
       - name: Install and Deploy
-        run: |
-          make deployments
+        run: just deploy-all
