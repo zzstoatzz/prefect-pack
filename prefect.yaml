@@ -49,6 +49,16 @@ deployments:
             image: "{{ build-image.image }}"
             tag: "{{ build-image.tag }}"
 
+  - name: print-info-local
+    description: a sanity check flow that prints some information
+    entrypoint: flows/hello.py:print_info
+    parameters: {}
+    work_pool:
+      name: local
+      job_variables:
+        env:
+          SOME_JOB_VARIABLE: "we did"
+
   - name: network-speed
     description: a sanity check flow that prints some information
     entrypoint: flows/network_speedtest/main.py:monitor_network
@@ -72,6 +82,8 @@ deployments:
       job_variables:
         image: "{{ build-image.image }}"
         command: "uv run -m prefect.engine"
+        env:
+          EXTRA_PIP_PACKAGES: "prefect-dbt --prerelease allow"
     build:
       - prefect_docker.deployments.steps.build_docker_image:
           id: build-image

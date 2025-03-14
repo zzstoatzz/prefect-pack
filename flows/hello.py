@@ -1,3 +1,4 @@
+import os
 import platform
 import subprocess
 import sys
@@ -11,6 +12,9 @@ def print_info():
     print(f"Platform: {platform.platform()}")
     prefect_version = subprocess.check_output(["prefect", "version"]).decode().strip()
     print(f"Prefect version: {prefect_version}")
+    print(
+        f"Did we set a job variable?: {os.environ.get('SOME_JOB_VARIABLE', 'we did not')}"
+    )
 
 
 if __name__ == "__main__":
