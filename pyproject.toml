@@ -1,7 +1,7 @@
 [project]
 name = "prefect-pack"
 dynamic = ["version"]
-description = "Minimal LLM friendly Python client for GitHub API."
+description = "Opinionated setup for Prefect projects"
 readme = "README.md"
 classifiers = [
     "Programming Language :: Python :: 3 :: Only",
