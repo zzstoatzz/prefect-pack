@@ -1,0 +1,38 @@
+services:
+  prefect-server:
+    image: prefecthq/prefect:3-latest # Use a specific version in production
+    command: prefect server start
+    environment:
+      PREFECT_SERVER_API_HOST: 0.0.0.0 # Explicitly set host for clarity (listens on all interfaces inside the container)
+      PREFECT_SERVER_API_PORT: 4200 # Explicitly set default port for clarity
+      # For external access via proxy, Prefect relies on X-Forwarded-* headers.
+      # Set these if Prefect needs to construct URLs pointing to itself *through the proxy*:
+      # PREFECT_UI_URL: http://localhost/ # Adjust localhost if using a domain
+      # PREFECT_API_URL: http://localhost/api/ # Adjust localhost if using a domain
+      PREFECT_LOGGING_LEVEL: INFO
+    ports:
+      # Expose 4200 only if you need direct access bypassing nginx, otherwise keep internal
+      - "4200:4200"
+    volumes:
+      - prefect_data:/root/.prefect
+    networks:
+      - prefect-network
+
+  nginx:
+    image: nginx:latest
+    platform: linux/amd64
+    ports:
+      - "80:80" # Expose Nginx externally
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - prefect-server
+    networks:
+      - prefect-network
+
+volumes:
+  prefect_data:
+
+
+networks:
+  prefect-network:

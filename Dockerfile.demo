@@ -8,6 +8,7 @@ COPY --from=ghcr.io/astral-sh/uv:0.5.30 /uv /bin/uv
 
 COPY pyproject.toml pyproject.toml
 COPY README.md README.md
+COPY LICENSE LICENSE
 COPY src src
 COPY flows flows
 COPY .git .git
