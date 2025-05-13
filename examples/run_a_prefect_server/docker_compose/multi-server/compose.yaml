@@ -1,0 +1,114 @@
+services:
+  traefik:
+    image: traefik:v3.0
+    command:
+      - "--api.insecure=true" # Enable Traefik dashboard (optional, access at http://localhost:8080)
+      - "--providers.docker=true" # Enable Docker provider
+      - "--providers.docker.exposedbydefault=false" # Only expose services with explicit labels
+      - "--entrypoints.web.address=:80" # Define an entry point named 'web' on port 80
+    ports:
+      - "4200:80" # Map host port 4200 to Traefik's 'web' entry point
+      - "8080:8080" # Map host port 8080 to Traefik's API/dashboard
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro" # Mount Docker socket (read-only)
+    networks:
+      - default
+
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      - POSTGRES_USER=prefect
+      - POSTGRES_PASSWORD=prefect
+      - POSTGRES_DB=prefect
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - default
+
+  redis:
+    image: redis
+    restart: always
+    command: [ "redis-server", "--appendonly", "yes" ]
+    networks:
+      - default
+
+  # ---- one-shot job: run Alembic, then exit ----
+  migrate:
+    build: .
+    depends_on: [ db ]
+    command: prefect server database upgrade -y
+    environment:
+      - PREFECT_SERVER_DATABASE_CONNECTION_URL=postgresql+asyncpg://prefect:prefect@db:5432/prefect
+    networks:
+      - default
+
+  # ---- first API process, load balanced by Traefik ----
+  prefect-a:
+    build: .
+    depends_on: [ migrate, db, redis ]
+    command: prefect server start --host 0.0.0.0 --port 4200 --no-services
+    env_file:
+      - .env
+    environment:
+      - PREFECT_SERVER_DATABASE_CONNECTION_URL=postgresql+asyncpg://prefect:prefect@db:5432/prefect
+      - PREFECT_MESSAGING_BROKER=prefect_redis.messaging
+      - PREFECT_MESSAGING_CACHE=prefect_redis.messaging
+      - PREFECT_REDIS_MESSAGING_HOST=redis
+      - PREFECT_REDIS_MESSAGING_PORT=6379
+      - PREFECT_REDIS_MESSAGING_DB=0
+      - PREFECT_API_DATABASE_MIGRATE_ON_START=false
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.prefect-api.entrypoints=web"
+      - "traefik.http.routers.prefect-api.rule=PathPrefix(`/`)"
+      - "traefik.http.services.prefect-api-service.loadbalancer.server.port=4200"
+    networks:
+      - default
+
+  # ---- second API process, load balanced by Traefik ----
+  prefect-b:
+    build: .
+    depends_on: [ migrate, db, redis ]
+    command: prefect server start --host 0.0.0.0 --port 4200 --no-services
+    env_file:
+      - .env
+    environment:
+      - PREFECT_SERVER_DATABASE_CONNECTION_URL=postgresql+asyncpg://prefect:prefect@db:5432/prefect
+      - PREFECT_MESSAGING_BROKER=prefect_redis.messaging
+      - PREFECT_MESSAGING_CACHE=prefect_redis.messaging
+      - PREFECT_REDIS_MESSAGING_HOST=redis
+      - PREFECT_REDIS_MESSAGING_PORT=6379
+      - PREFECT_REDIS_MESSAGING_DB=0
+      - PREFECT_API_DATABASE_MIGRATE_ON_START=false
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.prefect-api.entrypoints=web"
+      - "traefik.http.routers.prefect-api.rule=PathPrefix(`/`)"
+      - "traefik.http.services.prefect-api-service.loadbalancer.server.port=4200"
+    networks:
+      - default
+
+  prefect-background-services:
+    build: .
+    depends_on: [ migrate, db, redis ]
+    command: prefect server services start
+    env_file:
+      - .env
+    environment:
+      - PREFECT_SERVER_DATABASE_CONNECTION_URL=postgresql+asyncpg://prefect:prefect@db:5432/prefect
+      - PREFECT_MESSAGING_BROKER=prefect_redis.messaging
+      - PREFECT_MESSAGING_CACHE=prefect_redis.messaging
+      - PREFECT_REDIS_MESSAGING_HOST=redis
+      - PREFECT_REDIS_MESSAGING_PORT=6379
+      - PREFECT_REDIS_MESSAGING_DB=0
+      - PREFECT_API_DATABASE_MIGRATE_ON_START=false
+    networks:
+      - default
+
+volumes:
+  postgres_data: {}
+
+networks:
+  default:
+    driver: bridge
