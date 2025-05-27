@@ -44,6 +44,19 @@ services:
       # Connects to the same custom bridge network.
       - prefect-network
 
+  worker:
+    image: prefecthq/prefect:3-latest
+    command: prefect worker start --pool local --type process
+    environment:
+      # For inter-container communication, use the service name and internal port
+      PREFECT_API_URL: http://prefect-server:4200/api/
+    depends_on:
+      - prefect-server
+    networks:
+      - prefect-network
+    volumes:
+      - prefect_data:/root/.prefect
+
 volumes:
   # Defines the named volume for Prefect server data persistence.
   prefect_data:
