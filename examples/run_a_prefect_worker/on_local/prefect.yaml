@@ -28,7 +28,8 @@ deployments:
       name: local
     pull:
       - prefect.deployments.steps.git_clone:
+          id: git-clone
           repository: https://github.com/zzstoatzz/prefect-pack.git
       - prefect.deployments.steps.run_shell_script:
           script: |
-            uv pip install -r examples/run_a_prefect_worker/on_local/requirements.txt
+            uv pip install -r {{ git-clone.directory }}/examples/run_a_prefect_worker/on_local/requirements.txt
