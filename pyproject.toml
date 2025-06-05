@@ -85,8 +85,3 @@ target-version = "py312"
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
-
-[tool.uv.workspace]
-members = [
-    "examples/run_flows_on_docker/run_flows_with_custom_cwd_python_based", "flows/use_polars",
-]
