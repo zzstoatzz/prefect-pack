@@ -126,3 +126,21 @@ deployments:
       job_variables:
         pip_packages:
           - pandas
+
+  - name: uses-polars
+    description: a sanity check flow that prints some information
+    entrypoint: flows/use_polars/main.py:main
+    parameters: {}
+    work_pool:
+      name: local
+    pull:
+      - prefect.deployments.steps.git_clone:
+          id: git-clone
+          repository: https://github.com/zzstoatzz/prefect-pack.git
+      - prefect.deployments.steps.run_shell_script:
+          script: |
+            cd $DIRECTORY
+            uv sync --project flows/use_polars
+          env:
+            DIRECTORY: "{{ git-clone.directory }}"
+          expand_env_vars: true
