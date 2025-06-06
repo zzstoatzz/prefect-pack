@@ -133,34 +133,4 @@ deployments:
     parameters: {}
     work_pool:
       name: local
-    pull:
-      - prefect.deployments.steps.git_clone:
-          id: git-clone
-          repository: https://github.com/zzstoatzz/prefect-pack.git
-      - prefect.deployments.steps.run_shell_script:
-          script: |
-            uv venv this-run --python 3.12
-            bash -c "source this-run/bin/activate"
-            uv sync --project {{ git-clone.directory }}/flows/use_polars
-            echo $VIRTUAL_ENV
-
-          expand_env_vars: true
-
-  - name: uses-pandas
-    description: a sanity check flow that prints some information
-    entrypoint: flows/use_pandas/main.py:main
-    parameters: {}
-    work_pool:
-      name: local
-    pull:
-      - prefect.deployments.steps.git_clone:
-          id: git-clone
-          repository: https://github.com/zzstoatzz/prefect-pack.git
-      - prefect.deployments.steps.run_shell_script:
-          script: |
-            uv venv this-run --python 3.12
-            bash -c "source this-run/bin/activate"
-            uv sync --project {{ git-clone.directory }}/flows/use_pandas
-            echo $VIRTUAL_ENV
-
-          expand_env_vars: true
+      command: "uv run --project git+https://github.com/zzstoatzz/prefect-pack.git@main#subdirectory=flows/use_polars -m prefect.engine"
