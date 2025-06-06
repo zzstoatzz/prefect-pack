@@ -25,7 +25,7 @@ def modify_one_dataframe(df: pl.DataFrame) -> pl.DataFrame:
 
 @task
 def save_one_dataframe(df: pl.DataFrame):
-    df.write_csv("one_dataframe.csv", compression="gzip")
+    df.write_csv("one_dataframe.csv")
 
 
 @flow(log_prints=True)
