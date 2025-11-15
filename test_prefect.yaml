@@ -1,0 +1,10 @@
+name: test-secret-value
+
+deployments:
+  - name: test-secret-value
+    entrypoint: test_secret_value.py:test_secret_injection
+    work_pool:
+      name: local
+      job_variables:
+        env:
+          TEST_SECRET: "{{ prefect.blocks.secret.test-secret.value }}"
