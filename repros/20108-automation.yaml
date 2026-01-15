@@ -1,0 +1,20 @@
+name: "Resume flow run on PR merge (20108 test)"
+description: "Test automation for issue #20108 - uses force=True to reschedule failed flow runs"
+enabled: true
+trigger:
+  type: event
+  match:
+    prefect.resource.id: "prefect.flow-run.*"
+    pr.merged: "True"
+  match_related: {}
+  after: []
+  expect:
+    - "github.pull_request.closed"
+  for_each: []
+  posture: "Reactive"
+  threshold: 1
+  within: 0
+actions:
+  - type: "change-flow-run-state"
+    state: "SCHEDULED"
+    force: true
