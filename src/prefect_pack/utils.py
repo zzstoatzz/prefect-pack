@@ -8,7 +8,7 @@ T = TypeVar("T")
 _adapter_cache: dict[type[Any], TypeAdapter[Any]] = {}
 
 
-def parse_as(
+def parse_as[T](
     type_: type[T],
     data: Any,
     mode: Literal["python", "json", "strings"] = "python",

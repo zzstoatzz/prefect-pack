@@ -116,7 +116,6 @@ deployments:
       - prefect.deployments.steps.run_shell_script:
           script: pip install marvin
 
-
   - name: uses-managed-work-pool
     description: a sanity check flow that prints some information
     entrypoint: examples/run_flows_on_managed_pool/workflow.py:load_titanic_dataset
