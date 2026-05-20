@@ -7,13 +7,19 @@ uses microcosm.blue infra:
 """
 
 from collections.abc import Iterator
+from typing import NamedTuple
 
 import httpx
 from prefect import flow, task
-from prefect.logging import get_run_logger
 
 LIGHTRAIL = "https://lightrail.microcosm.blue"
 SLINGSHOT = "https://slingshot.microcosm.blue"
+
+
+class ResolvedDid(NamedTuple):
+    did: str
+    handle: str
+    pds: str
 
 
 def _iter_creator_dids(
@@ -44,9 +50,8 @@ def discover_creator_dids(collection: str, page_size: int = 1000) -> list[str]:
     return dids
 
 
-@task(retries=2, retry_delay_seconds=2)
-def resolve_pds(did: str) -> tuple[str, str, str]:
-    """resolve a DID to (did, handle, pds_url) via slingshot."""
+@task(retries=2, retry_delay_seconds=2, log_prints=True)
+def resolve_pds(did: str) -> ResolvedDid:
     with httpx.Client(timeout=15.0) as client:
         r = client.get(
             f"{SLINGSHOT}/xrpc/blue.microcosm.identity.resolveMiniDoc",
@@ -54,17 +59,16 @@ def resolve_pds(did: str) -> tuple[str, str, str]:
         )
         r.raise_for_status()
         doc = r.json()
-    return did, doc.get("handle") or did, doc["pds"]
+    return ResolvedDid(did=did, handle=doc.get("handle") or did, pds=doc["pds"])
 
 
-@task(retries=2, retry_delay_seconds=2)
+@task(retries=2, retry_delay_seconds=2, log_prints=True)
 def count_records(pds: str, did: str, collection: str) -> int | None:
     """paginate listRecords on the user's PDS and return the total count.
 
     returns None if the PDS is unreachable (e.g. cert chain issues on
     self-hosted instances) so the rest of the fan-out can still complete.
     """
-    logger = get_run_logger()
     total = 0
     cursor: str | None = None
     seen_cursors: set[str] = set()
@@ -91,7 +95,7 @@ def count_records(pds: str, did: str, collection: str) -> int | None:
                 seen_cursors.add(next_cursor)
                 cursor = next_cursor
     except httpx.HTTPError as exc:
-        logger.warning(f"could not count {did} on {pds}: {exc!r}")
+        print(f"could not count {did} on {pds}: {exc!r}")
         return None
 
 
@@ -100,20 +104,19 @@ def creators_of_collection(
     collection: str = "tech.waow.ken.profile",
 ) -> dict[str, int]:
     """return {handle: record_count} for every creator of `collection`, sorted desc."""
-    logger = get_run_logger()
     dids = discover_creator_dids(collection)
     if not dids:
-        logger.warning(f"no creators found for collection {collection!r}")
+        print(f"no creators found for collection {collection!r}")
         return {}
 
-    resolved = resolve_pds.map(dids).result()
-    counts = count_records.map(
-        pds=[r[2] for r in resolved],
-        did=[r[0] for r in resolved],
+    resolved: list[ResolvedDid] = resolve_pds.map(dids).result()
+    counts: list[int | None] = count_records.map(
+        pds=[r.pds for r in resolved],
+        did=[r.did for r in resolved],
         collection=collection,
     ).result()
 
-    by_handle = {handle: n for (_, handle, _), n in zip(resolved, counts)}
+    by_handle = {r.handle: n for r, n in zip(resolved, counts)}
     unreachable = [h for h, n in by_handle.items() if n is None]
     counted = {h: n for h, n in by_handle.items() if n is not None}
     ranked = dict(sorted(counted.items(), key=lambda kv: kv[1], reverse=True))
