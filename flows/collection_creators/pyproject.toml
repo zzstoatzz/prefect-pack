@@ -1,0 +1,6 @@
+[project]
+name = "collection-creators"
+version = "0.1.0"
+description = "count creators of an atproto collection via microcosm.blue"
+requires-python = ">=3.10"
+dependencies = ["prefect"]
