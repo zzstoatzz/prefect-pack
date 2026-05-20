@@ -115,9 +115,7 @@ def discover_creator_dids(collection: str, page_size: int = 1000) -> list[str]:
     return dids
 
 
-async def _resolve_one(
-    client: httpx.AsyncClient, did: str
-) -> tuple[str, str] | None:
+async def _resolve_one(client: httpx.AsyncClient, did: str) -> tuple[str, str] | None:
     try:
         r = await client.get(
             f"{SLINGSHOT}/xrpc/blue.microcosm.identity.resolveMiniDoc",
@@ -202,21 +200,30 @@ async def _gather_breakdowns(
             async with sem:
                 resolved = await _resolve_one(client, did)
                 if resolved is None:
-                    result = CreatorBreakdown(handle=did, counts=None, error="unresolved")
+                    result = CreatorBreakdown(
+                        handle=did, counts=None, error="unresolved"
+                    )
                 else:
                     handle, pds = resolved
                     counts = await _walk_repo(client, pds, did)
                     if counts is None:
-                        result = CreatorBreakdown(handle=handle, counts=None, error="unreachable")
+                        result = CreatorBreakdown(
+                            handle=handle, counts=None, error="unreachable"
+                        )
                     else:
-                        result = CreatorBreakdown(handle=handle, counts=counts, error=None)
+                        result = CreatorBreakdown(
+                            handle=handle, counts=counts, error=None
+                        )
             done += 1
             elapsed = asyncio.get_event_loop().time() - started_at
             collections_str = (
-                f"{len(result.counts):>3} collections" if result.counts is not None
+                f"{len(result.counts):>3} collections"
+                if result.counts is not None
                 else f"({result.error})"
             )
-            print(f"  [{done:>4}/{total}] {result.handle:<35} {collections_str:>20}  ({elapsed:5.1f}s elapsed)")
+            print(
+                f"  [{done:>4}/{total}] {result.handle:<35} {collections_str:>20}  ({elapsed:5.1f}s elapsed)"
+            )
             return result
 
         return await asyncio.gather(*(work(d) for d in dids))
