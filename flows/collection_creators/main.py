@@ -1,9 +1,16 @@
+# /// script
+# requires-python = ">=3.10"
+# dependencies = ["prefect"]
+# ///
 """who created records of a given atproto collection, and how many.
 
 uses microcosm.blue infra:
 - lightrail enumerates DIDs that have ever held records of a collection
 - slingshot resolves each DID to its PDS endpoint
 - the PDS itself answers com.atproto.repo.listRecords for the count
+
+run from anywhere with uv:
+  uv run https://raw.githubusercontent.com/zzstoatzz/prefect-pack/main/flows/collection_creators/main.py
 """
 
 from collections.abc import Iterator
