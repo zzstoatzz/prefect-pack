@@ -9,10 +9,13 @@ uses microcosm.blue infra:
 - slingshot resolves each DID to its PDS endpoint
 - the PDS itself answers com.atproto.repo.listRecords for the count
 
-run from anywhere with uv:
+run from anywhere with uv (defaults to tech.waow.ken.profile):
   uv run https://raw.githubusercontent.com/zzstoatzz/prefect-pack/main/flows/collection_creators/main.py
+
+  uv run https://raw.githubusercontent.com/zzstoatzz/prefect-pack/main/flows/collection_creators/main.py <some.nsid>
 """
 
+import sys
 from collections.abc import Iterator
 from typing import NamedTuple
 
@@ -109,12 +112,22 @@ def count_records(pds: str, did: str, collection: str) -> int | None:
 @flow(log_prints=True)
 def creators_of_collection(
     collection: str = "tech.waow.ken.profile",
+    warn_above: int = 1000,
 ) -> dict[str, int]:
     """return {handle: record_count} for every creator of `collection`, sorted desc."""
     dids = discover_creator_dids(collection)
     if not dids:
         print(f"no creators found for collection {collection!r}")
         return {}
+
+    if len(dids) > warn_above:
+        print(
+            f"⚠️  {len(dids):,} creators found for {collection!r}. "
+            f"this flow fans out one prefect task per creator, which strains "
+            f"the orchestration layer above ~{warn_above:,} items and will "
+            f"also hit every creator's PDS. continuing anyway, but consider "
+            f"sampling or batching for large collections."
+        )
 
     resolved: list[ResolvedDid] = resolve_pds.map(dids).result()
     counts: list[int | None] = count_records.map(
@@ -142,4 +155,5 @@ def creators_of_collection(
 
 
 if __name__ == "__main__":
-    creators_of_collection()
+    collection = sys.argv[1] if len(sys.argv) > 1 else "tech.waow.ken.profile"
+    creators_of_collection(collection)
