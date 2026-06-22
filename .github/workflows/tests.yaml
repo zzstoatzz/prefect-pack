@@ -39,11 +39,11 @@ jobs:
           version: "latest"
           python-version: "3.12"
 
-      - name: Install prefect-shell from PR 22336
+      - name: Install prefect-shell from fix branch
         shell: pwsh
         run: |
           uv venv
-          uv pip install "prefect-shell @ git+https://github.com/rangampallysonali/prefect.git@fix-shelloperation-powershell-policy#subdirectory=src/integrations/prefect-shell"
+          uv pip install "prefect-shell @ git+https://github.com/PrefectHQ/prefect.git@codex/prefect-shell-powershell-args#subdirectory=src/integrations/prefect-shell"
 
       - name: Run PowerShell shell argument repro
         shell: pwsh
