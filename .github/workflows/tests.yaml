@@ -26,6 +26,44 @@ permissions:
   contents: read
 
 jobs:
+  prefect_shell_windows_repro:
+    name: Prefect shell PowerShell args repro
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "latest"
+          python-version: "3.12"
+
+      - name: Install prefect-shell from PR 22336
+        shell: pwsh
+        run: |
+          uv venv
+          uv pip install "prefect-shell @ git+https://github.com/rangampallysonali/prefect.git@fix-shelloperation-powershell-policy#subdirectory=src/integrations/prefect-shell"
+
+      - name: Run PowerShell shell argument repro
+        shell: pwsh
+        run: |
+          @'
+          from prefect_shell import ShellOperation
+
+          result = ShellOperation(
+              commands=["Write-Output 'prefect-shell powershell args ok'"],
+              extension=".ps1",
+              shell="powershell.exe -executionpolicy bypass",
+              stream_output=False,
+          ).run()
+
+          assert result == ["prefect-shell powershell args ok"], result
+          print(result)
+          '@ | Out-File -FilePath repro.py -Encoding utf8
+
+          uv run python repro.py
+
   run_tests:
     name: Run Tests on ${{ matrix.os }} with Python ${{ matrix.python-version }}
     timeout-minutes: 15
