@@ -104,7 +104,7 @@ deployments:
       job_variables:
         image: prefecthq/prefect:3-python3.12
         env:
-          - name: OPENAI_API_KEY
+          OPENAI_API_KEY:
             valueFrom:
               secretKeyRef:
                 name: openai-api-key
